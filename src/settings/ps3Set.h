@@ -1,0 +1,3 @@
+#define MASTER_ADDRESS "01:02:03:04:05:06"
+#define PS3_LOG_INTERVAL 50
+#define DEADZONE 10

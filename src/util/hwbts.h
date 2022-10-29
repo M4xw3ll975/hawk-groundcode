@@ -1,0 +1,2 @@
+void inithwbts();
+void hwbtListener();
