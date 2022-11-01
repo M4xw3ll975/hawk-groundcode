@@ -40,7 +40,7 @@ class Mission:
 
 
 hawk = Mission()
-hawk.insert_waypoints("redlining.gpx")
+hawk.insert_waypoints("redlining.gpx") 
 app.jinja_env.globals.update(waypoint_list=hawk.mission_waypoints)
 app.jinja_env.globals.update(waypoint_center=hawk.calculate_center())
 
