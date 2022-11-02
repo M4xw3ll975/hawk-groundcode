@@ -14,11 +14,13 @@
             src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
             integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg="
             crossorigin=""></script>
-        <!-- MapboxGL -->
+        <!-- Mapbox -->
         <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js'></script>
         <link
             href='https://api.tiles.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.css'
             rel='stylesheet'/>
+        <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.2.2/mapbox-gl-draw.css" type="text/css">
+        <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.2.2/mapbox-gl-draw.js"></script>
         <!-- Bootstrap -->
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
@@ -27,7 +29,8 @@
             crossorigin="anonymous">
         <!-- custom css -->
         <link rel="stylesheet" href="../css/style.css">
-
+        <!-- FileSaver -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
         <title>AETHER WCP</title>
     </head>
 
@@ -67,7 +70,7 @@
                         <p></p>
                         <!-- load route button -->
                         <button
-                            type="submit"
+                            type="button"
                             id="load"
                             class="btn btn-primary">
                             <svg
@@ -123,8 +126,10 @@
             </div>
         </div>
 
+        
+        <script src='../js/togeojson.js'></script>
         <!-- uncomment for further edditing. Reason for comment: -->
-        <!-- <script src="../js/map.js"></script> -->
+        <script src="../js/main.js"></script>
     </body>
 
 </html>
