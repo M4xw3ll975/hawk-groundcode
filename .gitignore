@@ -6,3 +6,5 @@ __pycache__/
 .idea/modules.xml
 .idea/vcs.xml
 .idea/workspace.xml
+
+web-control-panel/frontend/js/keys.js

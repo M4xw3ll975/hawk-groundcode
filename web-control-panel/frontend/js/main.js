@@ -7,7 +7,8 @@ const loadButton = document.getElementById('load');
 
 //Mapbox map
 //access token
-mapboxgl.accessToken = 'pk.eyJ1IjoibTR4dzNsbCIsImEiOiJjbDl4NzhsbGMwNzY3M3Fub3JhbnZldGhnIn0.9Y1af9ijoJiMuKxBe0CZyw';
+// mapboxgl.accessToken = 'pk.eyJ1IjoibTR4dzNsbCIsImEiOiJjbDl4NzhsbGMwNzY3M3Fub3JhbnZldGhnIn0.9Y1af9ijoJiMuKxBe0CZyw';
+mapboxgl.accessToken = MAPBOX_API_KEY;
 
 //map
 var map = new mapboxgl.Map({
@@ -104,7 +105,7 @@ class CustomControl {
 
         this._container.innerHTML = '<div class="tools-box">' +
         '<button>' +
-        '<span class="mapbxgl-ctrl-icon layerIcon" aria-hidden="true" title="Description"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-map-fill" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.598-.49L10.5.99 5.598.01a.5.5 0 0 0-.196 0l-5 1A.5.5 0 0 0 0 1.5v14a.5.5 0 0 0 .598.49l4.902-.98 4.902.98a.502.502 0 0 0 .196 0l5-1A.5.5 0 0 0 16 14.5V.5zM5 14.09V1.11l.5-.1.5.1v12.98l-.402-.08a.498.498 0 0 0-.196 0L5 14.09zm5 .8V1.91l.402.08a.5.5 0 0 0 .196 0L11 1.91v12.98l-.5.1-.5-.1z"/></svg></span>' +
+        '<span class="mapbxgl-ctrl-icon layerIcon" aria-hidden="true" title="Description"><img src="../img/map_FILL0_wght400_GRAD0_opsz48.png"></span>' +
         '</button>' +
         '</div>';
         return this._container;
@@ -120,10 +121,64 @@ class CustomControl {
 
 map.addControl(new CustomControl());
 
+
+//add dynamic custom marker to the map
+//get the coordinates of the plane from the api
+let planeCoordinates = [13.845101, 46.601179];
+
+//define geojson for the marker
+const geojson = {
+    "type": "FeatureCollection",
+    "features": [{
+        "type": "Feature",
+        "geometry": {
+            "type": "Point",
+            "coordinates": planeCoordinates
+        }
+    }]
+};
+
+//add the marker to the map
+for (const feature of geojson.features) {
+    const el = document.createElement('div');
+    el.className = 'marker';
+    new mapboxgl.Marker(el)
+        .setLngLat(feature.geometry.coordinates)
+        .addTo(map);
+}
+
+
+//update the marker position every 5 seconds
+setInterval(function () {
+    //get the coordinates of the plane from the api
+    let planeCoordinates = [13.845101, 46.601179];
+
+    //define geojson for the marker
+    const geojson = {
+        "type": "FeatureCollection",
+        "features": [{
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": planeCoordinates
+            }
+        }]
+    };
+
+    //add the marker to the map
+    for (const feature of geojson.features) {
+        const el = document.createElement('div');
+        el.className = 'marker';
+        new mapboxgl.Marker(el)
+            .setLngLat(feature.geometry.coordinates)
+            .addTo(map);
+    }
+}, 5000);
+
 //generate a gpx file from the coordinates
 function generateGPX(coordinates) {
     var gpx = '<?xml version="1.0" encoding="UTF-8"?>';
-    gpx += '<gpx version="1.1" creator="Mapbox GL Draw" xmlns="http://www.topografix.com/GPX/1/1">' + '\n';
+    gpx += '<gpx version="1.1" creator="AEHTER WCP" xmlns="http://www.topografix.com/GPX/1/1">' + '\n';
     gpx += '<metadata />' + '\n';
     //add the coordinates to the gpx file as waypoints
     for (var i = 0; i < coordinates.length; i++) {
