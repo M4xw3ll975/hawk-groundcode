@@ -23,19 +23,17 @@ void onReceive(int packetSize) {
     int incomingLength = LoRa.read();
     int incomingID = LoRa.read();
     int incomingRSSI = LoRa.packetRssi();
-    int incomingSNR = LoRa.packetSnr();
+    float incomingSNR = LoRa.packetSnr();
 
     while (LoRa.available()) {
         LoRaData += (char)LoRa.read();
     }
 
     if (incomingLength != LoRaData.length()) {
-        // srlInfo("LoRa", "'" + String(incomingLength) +  "' -> corrupt?");
         return;
     }
 
     if (recipient != LORA_LOCAL) {
-        // srlInfo("LoRa", "'" + String(recipient) +  "' -> rogue?");
         return;
     }
 
@@ -44,6 +42,7 @@ void onReceive(int packetSize) {
             + String(recipient) + "/"
             + String(sender) + "/"
             + String(incomingLength) + "/"
+            + String(incomingID) + "/"
             + String(LoRaData)
             + "'");
     */
@@ -52,22 +51,23 @@ void onReceive(int packetSize) {
 }
 
 void LoRaTXM(){
-  LoRa.idle();
+    LoRa.idle();
 }
 
 void LoRaRXM(){
-  LoRa.receive();
+    LoRa.receive();
 }
 
 void sendLoRa(int type, String outgoing) {
-  LoRaTXM();
-  LoRa.beginPacket();
-  LoRa.write(LORA_DEST);
-  LoRa.write(LORA_LOCAL);
-  LoRa.write(outgoing.length());
-  LoRa.write(type);
-  LoRa.print(outgoing);
-  LoRa.endPacket();
+    LoRaTXM();
+    LoRa.beginPacket();
+    LoRa.write(LORA_DEST);
+    LoRa.write(LORA_LOCAL);
+    LoRa.write(outgoing.length());
+    LoRa.write(type);
+    LoRa.print(outgoing);
+    LoRa.endPacket();
+    LoRaRXM();
 }
 
 void initLoRa() {
@@ -78,8 +78,6 @@ void initLoRa() {
         while (1);
     }
     LoRa.onReceive(onReceive);
-    LoRa.onTxDone(LoRaRXM);
-    LoRaRXM();
     srlInfo("LoRa", "Initialized");
     writeToDisplay("LoRa:", "Initialized");
 }
