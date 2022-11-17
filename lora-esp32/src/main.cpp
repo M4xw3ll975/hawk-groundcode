@@ -36,5 +36,4 @@ void setup() {
 void loop() {
   procps3();
   lTRXctl();
-  ps3Stat();
 }
