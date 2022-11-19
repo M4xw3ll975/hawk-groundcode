@@ -8,3 +8,4 @@ __pycache__/
 .idea/workspace.xml
 
 web-control-panel/frontend/js/keys.js
+*.mp4

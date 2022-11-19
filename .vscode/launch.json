@@ -9,6 +9,12 @@
             "request": "launch",
             "name": "Open index.html",
             "file": "c:\\Users\\Max\\Documents\\GitHub\\hawk-groundcode\\web-control-panel\\frontend\\html\\index.html"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Open test-design.html",
+            "file": "c:\\Users\\Max\\Documents\\GitHub\\hawk-groundcode\\web-control-panel\\frontend\\html\\test-design.html",
         }
     ]
 }
