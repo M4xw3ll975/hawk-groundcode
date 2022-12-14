@@ -9,11 +9,11 @@ mapboxgl.accessToken = MAPBOX_API_KEY;
 var map = new mapboxgl.Map({
     container: 'map',
     //Style URL
-    style: 'mapbox://styles/m4xw3ll/clams6dxz003h14nx6tnwsm9i', //custom style
+    style: 'mapbox://styles/m4xw3ll/clb6asku6002414pkbmykld79', //custom style
     center: [
         13.845101, 46.601179
     ],
-    zoom: 10.7
+    zoom: 12
 });
 
 //add zoom and rotation controls to the map overlapping the map
@@ -45,10 +45,9 @@ const draw = new MapboxDraw({
                 "line-join": "round"
             },
             "paint": {
-                "line-color": "#e14673",
-                "line-dasharray": [
-                    0.2, 2
-                ],
+                // "line-color": "#e14673",
+                "line-color": "#ff0000",
+                
                 "line-width": 3,
                 "line-opacity": 0.7
             }
@@ -69,7 +68,8 @@ const draw = new MapboxDraw({
             ],
             "paint": {
                 "circle-radius": 6,
-                "circle-color": "#e14673"
+                // "circle-color": "#e14673"
+                "circle-color": "#ff0000"
             }
         }, {
             "id": "gl-draw-polygon-and-line-vertex-active",
@@ -94,11 +94,49 @@ const draw = new MapboxDraw({
     ]
 });
 
+//change the start and end point of the path
+function changeStartEnd() {
+    //get the coordinates of the start and end point
+    let start = draw.getAll().features[0].geometry.coordinates[0];
+    let end = draw.getAll().features[0].geometry.coordinates[1];
+    //add lable to the start and end point
+    draw.add({
+        "type": "Feature",
+        "properties": {
+            "marker-color": "#ff0000",
+            "marker-size": "large",
+            "marker-symbol": "airport"
+        },
+        "geometry": {
+            "type": "Point",
+            "coordinates": start
+        }
+    });
+    draw.add({
+        "type": "Feature",
+        "properties": {
+            "marker-color": "#ff0000",
+            "marker-size": "large",
+            "marker-symbol": "airport"
+        },
+        "geometry": {
+            "type": "Point",
+            "coordinates": end
+        }
+    });
+
+}
+
+
+
 map.addControl(draw);
 
 map.on('draw.create', updateArea);
 map.on('draw.delete', updateArea);
 map.on('draw.update', updateArea);
+
+// update start and end point and output the coordinates of the drawn path
+
 
 //store 2 styles in an array
 const styles = ['mapbox://styles/m4xw3ll/cl9zp5f6j00ez14qtletemydp', 'mapbox://styles/m4xw3ll/cl9y23u9m00jt14o2fipec794'];
@@ -183,10 +221,10 @@ setInterval(function () {
     let right_eng_temp = document.getElementById('right-eng-temp');
     let left_eng_battery = document.getElementById('left-eng-battery');
     let right_eng_battery = document.getElementById('right-eng-battery');
-    let left_eng_amp = document.getElementById('left-eng-amp');
-    let right_eng_amp = document.getElementById('right-eng-amp');
-    let left_eng_volt = document.getElementById('left-eng-volt');
-    let right_eng_volt = document.getElementById('right-eng-volt');
+    // let left_eng_amp = document.getElementById('left-eng-amp');
+    // let right_eng_amp = document.getElementById('right-eng-amp');
+    // let left_eng_volt = document.getElementById('left-eng-volt');
+    // let right_eng_volt = document.getElementById('right-eng-volt');
 
     //set button status with Buttonstatus.js
     ButtonStatus(left_eng_pwr, 'OK');
@@ -201,10 +239,12 @@ setInterval(function () {
     ButtonStatus(right_eng_temp, 'WARNING');
     ButtonStatus(left_eng_battery, 'OK');
     ButtonStatus(right_eng_battery, 'OK');
-    ButtonStatus(left_eng_amp, 'OK');
-    ButtonStatus(right_eng_amp, 'ERROR');
-    ButtonStatus(left_eng_volt, 'OK');
-    ButtonStatus(right_eng_volt, 'OK');
+    // ButtonStatus(left_eng_amp, 'OK');
+    // ButtonStatus(right_eng_amp, 'ERROR');
+    // ButtonStatus(left_eng_volt, 'OK');
+    // ButtonStatus(right_eng_volt, 'OK');
+
+    changeStartEnd();
 
 }, 5000);
 
@@ -248,14 +288,15 @@ function outputWaypoints(coordinates) {
 function updateArea(e) {
     var data = draw.getAll();
 
-    //generate a gpx file from the coordinates and save it to the server
-    var gpx = generateGPX(data.features[0].geometry.coordinates);
-    var blob = new Blob([gpx], {type: 'text/plain'});
-    var url = URL.createObjectURL(blob);
-    var link = document.createElement('a');
-    link.href = url;
-    link.download = 'path.gpx';
-    link.click();
+    // uncomment to enable gpx export and download
+    // //generate a gpx file from the coordinates and save it to the server
+    // var gpx = generateGPX(data.features[0].geometry.coordinates);
+    // var blob = new Blob([gpx], {type: 'text/plain'});
+    // var url = URL.createObjectURL(blob);
+    // var link = document.createElement('a');
+    // link.href = url;
+    // link.download = 'path.gpx';
+    // link.click();
 
     // FIXME: CODE BELOW NOT WORKING! (send the gpx file to the server) save the gpx
     // file internally on the server in the folder "gpx" get path of the gpx folder
@@ -265,5 +306,7 @@ function updateArea(e) {
     // name: name,         content: content     },     success: function (data) {
     // console.log(data);     } }); list the coordinates of the drawn path in the
     // paragraph with id="waypoint-list"
-    outputWaypoints(data.features[0].geometry.coordinates);
+
+    // deprecated: list the coordinates of the drawn path in the paragraph in the html
+    // outputWaypoints(data.features[0].geometry.coordinates);
 }
