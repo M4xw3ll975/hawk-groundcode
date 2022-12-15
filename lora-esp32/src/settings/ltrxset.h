@@ -1,1 +1,1 @@
-#define LTRX_DELAY 25
+#define LTRX_DELAY 100

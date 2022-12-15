@@ -36,8 +36,7 @@ void onReceive(int packetSize) {
     if (recipient != LORA_LOCAL) {
         return;
     }
-
-    /*
+/*
     srlInfo("LoRa", "received '" 
             + String(recipient) + "/"
             + String(sender) + "/"
@@ -45,8 +44,7 @@ void onReceive(int packetSize) {
             + String(incomingID) + "/"
             + String(LoRaData)
             + "'");
-    */
-
+*/
     declTRX(incomingID, LoRaData, incomingRSSI, incomingSNR);
 }
 
@@ -59,7 +57,6 @@ void LoRaRXM(){
 }
 
 void sendLoRa(int type, String outgoing) {
-    LoRaTXM();
     LoRa.beginPacket();
     LoRa.write(LORA_DEST);
     LoRa.write(LORA_LOCAL);
@@ -67,7 +64,15 @@ void sendLoRa(int type, String outgoing) {
     LoRa.write(type);
     LoRa.print(outgoing);
     LoRa.endPacket();
-    LoRaRXM();
+/*
+    srlInfo("LoRa", "sent '" 
+            + String(LORA_DEST) + "/"
+            + String(LORA_LOCAL) + "/"
+            + String(outgoing.length()) + "/"
+            + String(type) + "/"
+            + String(outgoing)
+            + "'");
+*/
 }
 
 void initLoRa() {
