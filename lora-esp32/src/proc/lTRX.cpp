@@ -11,81 +11,66 @@
 #include "settings/ltrxset.h"
 
 // timeouts for main loop
-unsigned long prCL = 0;
-unsigned long crCL = 0;
+unsigned long pastMillTRX = 0;
+unsigned long pastMillRespThresh = 0;
 // keep track of packet count
 unsigned int pktCnt = 0;
 // packet related data for last
 int lastPacketRSSI = 0;
 float lastPacketSNR = 0.0;
 // remote pkt counter for LQ
-int remotePktDiff = 0;
-
-// craft control packets to be handled by receiver
-void craftCTL(int t) {
-    switch (t) {
-        case 11:
-            // Link REQ packet
-            // (PC[val]Q)
-            sendLoRa(t,
-                "PC" +
-                String(pktCnt) +
-                "Q"
-            );
-            ++pktCnt;
-            break;
-        case 31:
-            // most important packet
-            // crafts controlle stick vals
-            // ( A[val]E[val]R[val]Q )
-            sendLoRa(t,
-                "A" +
-                String(fetchCtrl(0)) +
-                "E" +
-                String(fetchCtrl(1)) +
-                "R" +
-                String(fetchCtrl(2)) +
-                "Q"
-            );
-            ++pktCnt;
-            break;
-        case 32:
-            // L/R Shoulder Buttons
-            // ( SR[val]SL[val]Q )
-            sendLoRa(t,
-                "SR" + 
-                String(fetchBtn(0)) +
-                "SL" +
-                String(fetchBtn(1)) +
-                "Q"
-            );
-            ++pktCnt;
-            break;
-        case 33:
-            // Symbol Buttons
-            // ( PX[val]PS[val]PT[val]PC[val]Q )
-            sendLoRa(t,
-                "PX" + 
-                String(fetchBtn(2)) +
-                "PS" + 
-                String(fetchBtn(3)) +
-                "PT" + 
-                String(fetchBtn(4)) +
-                "PC" + 
-                String(fetchBtn(5)) +
-                "Q"
-            );
-            ++pktCnt;
-            break;
-    }
-}
+int remoteRSSI = 0;
+float remoteSNR = 0.0;
+// true if we have to wait for telemetry
+bool waitForACK = false;
 
 // link quality management
-void handleLNK(int t, String d) {
-    switch (t) {
-        case 12:
-            remotePktDiff = d.substring(2, d.indexOf("Q")).toInt();
-            break;
+void handleStream(int t, String d) {
+    if ( t == 200 ) {
+        // recieved telemetry ACK, clear wait
+        waitForACK = false;
+        // handle data
+        remoteRSSI = d.substring(2, d.indexOf("Q")).toInt();
+        srlInfo("lTRX", String(remoteRSSI) );
+    } else return;
+}
+
+// craft control packets to be handled by receiver
+void lTRXTransmit() {
+    if ( pktCnt < LTRX_TELEMETRY_RATE ) {
+        /*
+            Data Packet ( 
+                A[val] - Stick Aileron
+                E[val] - Stick Elevator
+                R[val] - Stick Rudder
+                SL[val] - Button Shoulder Left
+                SR[val] - Button Shoulder Right
+                Q - EOF
+            )
+        */
+        sendLoRa(1,
+            "A" +
+            String(fetchCtrl(0)) +
+            "E" +
+            String(fetchCtrl(1)) +
+            "R" +
+            String(fetchCtrl(2)) +
+            "SR" + 
+            String(fetchBtn(0)) +
+            "SL" +
+            String(fetchBtn(1)) +
+            "Q"
+        );
+        pktCnt++;
+    } else {
+        // telemetry request packet
+        sendLoRa(100,"REQ");
+        // update REQ timestamp
+        pastMillRespThresh = millis();
+        // requested ACK, set wait bool
+        waitForACK = true;
+        // reset packet count
+        pktCnt = 0;
     }
 }
 
@@ -93,30 +78,26 @@ void handleLNK(int t, String d) {
 void declTRX(int msgType, String data, int pktRS, float pktSNR) {
     lastPacketRSSI = pktRS;
     lastPacketSNR = pktSNR;
-    switch (msgType) {
-        case 10 ... 19:
-            handleLNK(msgType, data);
-            break;
-        /*
-        case 20 ... 29:
-            // GPS, @TODO, do nothing for now
-            break;
-        */
-    }
+    handleStream(msgType, data);
 }
 
 // lTRX main control loop
 void lTRXctl() {
-    crCL = millis();
-    if (crCL - prCL > LTRX_DELAY) {
-        prCL = crCL;
-        // main control is always sent
-        craftCTL(31);
-        // every 4 packets
-        if (pktCnt % 4 == 0) {
-            craftCTL(32);
-            craftCTL(33);
-            craftCTL(11);
+    // send response after delay
+    if (millis() - pastMillTRX > LTRX_DELAY) {
+        if ( 
+            !waitForACK || 
+            millis() - pastMillRespThresh > LTRX_RESPONSE_THRESHOLD 
+        ) {
+            // clear wait
+            waitForACK = false;
+            // transmitting
+            LoRaTXM();
+            lTRXTransmit();
+        } else {
+            // set recieve
+            LoRaRXM();
         }
+        pastMillTRX = millis();
     } else return;
 }
