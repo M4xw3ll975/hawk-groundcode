@@ -10,9 +10,6 @@
 #include "util/OLED.h"
 #include "settings/ps3Set.h"
 
-// timeouts for main
-unsigned long prCTRL = 0;
-unsigned long crCTRL = 0;
 // main stick val array
 int stickOut[4];
 // button array
@@ -22,6 +19,16 @@ void onConnect() {
     srlInfo("ps3ctl", "Connected");
 }
 
+// expose controls
+int fetchCtrl(int id) {
+    return stickOut[id];
+}
+
+// expose buttons
+int fetchBtn(int id) {
+    return btnOut[id];
+}
+
 void initPs3() {
     Ps3.attachOnConnect(onConnect);
     Ps3.begin(MASTER_ADDRESS);
@@ -29,6 +36,7 @@ void initPs3() {
     writeToDisplay("ps3ctl:", "Initialized");
 }
 
+// main controller process
 void procps3() {
     if (Ps3.isConnected()) {
         // fetch all values
@@ -49,33 +57,4 @@ void procps3() {
             }
         }
     } else return;
-}
-
-// main controller fetch loop
-void ps3Stat() {
-    if (Ps3.isConnected()) {
-        crCTRL = millis();
-        if (crCTRL - prCTRL > PS3_LOG_INTERVAL) {
-            prCTRL = crCTRL;
-            String LOG_STRING = "("
-                + String(stickOut[0]) 
-                + "/" + String(stickOut[1])
-                + ") ("
-                + String(stickOut[2])
-                + "/" + String(stickOut[3])
-                + ")";
-            srlInfo("ps3ctl:", LOG_STRING);
-            writeToDisplay("ps3ctl", LOG_STRING);
-        } else return;
-    } else return;
-}
-
-// expose controls
-int fetchCtrl(int id) {
-    return stickOut[id];
-}
-
-// expose buttons
-int fetchBtn(int id) {
-    return btnOut[id];
 }

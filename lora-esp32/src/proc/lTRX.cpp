@@ -5,8 +5,8 @@
 
 #include <Arduino.h>
 #include "lTRX.h"
+#include "proc/Controller.h"
 #include "util/LoRa.h"
-#include "util/Controller.h"
 #include "util/Serial.h"
 #include "settings/ltrxset.h"
 

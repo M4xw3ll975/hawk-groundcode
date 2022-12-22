@@ -9,8 +9,12 @@
 #include <Adafruit_SSD1306.h>
 #include "util/Serial.h"
 #include "pins/oledPins.h"
-#include "settings/oledSet.h"
 #include "OLED.h"
+
+// definitions
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define OLED_FONT_SIZE 1
 
 // display
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire);
