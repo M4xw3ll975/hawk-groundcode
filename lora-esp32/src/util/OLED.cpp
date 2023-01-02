@@ -8,22 +8,16 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include "util/Serial.h"
-#include "pins/oledPins.h"
 #include "OLED.h"
 
-// definitions
-#define SCREEN_WIDTH 128
-#define SCREEN_HEIGHT 64
-#define OLED_FONT_SIZE 1
-
 // display
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire);
+Adafruit_SSD1306 display(128, 64, &Wire);
 
 // write to display
 void writeToDisplay(String type, String msg) {
     display.clearDisplay();
     display.setCursor(0, 0);
-    display.println("AAE Hawk");
+    display.println("AAE");
     display.setCursor(0, 28);
     display.println(type);
     display.setCursor(0, 44);
@@ -39,7 +33,7 @@ void initOLED() {
         while (1);
     }
     display.setTextColor(SSD1306_WHITE);
-    display.setTextSize(OLED_FONT_SIZE);
+    display.setTextSize(1);
     srlInfo("OLED", "Initialized");
     writeToDisplay("OLED:", "Initialized");
 }
