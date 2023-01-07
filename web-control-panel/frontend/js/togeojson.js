@@ -1,3 +1,5 @@
+// Credits: https://github.com/mapbox/togeojson
+
 var toGeoJSON = (function() {
     'use strict';
 
