@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
     <head>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -36,6 +35,10 @@
             crossorigin="anonymous">
         <!-- custom css -->
         <link rel="stylesheet" href="../css/style.css">
+        <!-- google fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet"> 
         <!-- FileSaver -->
         <script
             src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -43,7 +46,6 @@
     </head>
 
     <body>
-
         <div class="container h-100 d-flex flex-column">
             <div class="row center-text">
                 <h1 class="text-light"><img src="../img/logoNewJapaneseText.png" width="60" class="float-start">
@@ -130,10 +132,8 @@
                 <div id="map" class="bg-light bg-opacity-10 text-light col-md-9"></div>
             </div>
         </div>
-
+        <script src="../js/keys.js"></script>
         <script src='../js/togeojson.js'></script>
-        <!-- uncomment for further edditing. Reason for comment: -->
         <script src="../js/main.js"></script>
     </body>
-
 </html>
