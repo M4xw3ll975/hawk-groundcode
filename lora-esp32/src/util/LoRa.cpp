@@ -22,60 +22,69 @@ void onReceive(int packetSize) {
     byte sender = LoRa.read();
     int incomingLength = LoRa.read();
     int incomingID = LoRa.read();
+    int incomingRSSI = LoRa.packetRssi();
+    float incomingSNR = LoRa.packetSnr();
 
     while (LoRa.available()) {
         LoRaData += (char)LoRa.read();
     }
-
     if (incomingLength != LoRaData.length()) {
-        srlInfo("LoRa", "'" + String(incomingLength) +  "' -> corrupt?");
         return;
     }
-
     if (recipient != LORA_LOCAL) {
-        srlInfo("LoRa", "'" + String(recipient) +  "' -> rogue?");
         return;
     }
 
+    #ifdef LORA_RX_LOGGING
     srlInfo("LoRa", "received '" 
             + String(recipient) + "/"
             + String(sender) + "/"
             + String(incomingLength) + "/"
+            + String(incomingID) + "/"
             + String(LoRaData)
             + "'");
+    #endif
 
-    declTRX(incomingID, LoRaData);
+    declTRX(incomingID, LoRaData, incomingRSSI, incomingSNR);
 }
 
 void LoRaTXM(){
-  LoRa.idle();
+    LoRa.idle();
 }
 
 void LoRaRXM(){
-  LoRa.receive();
+    LoRa.receive();
 }
 
 void sendLoRa(int type, String outgoing) {
-  LoRaTXM();
-  LoRa.beginPacket();
-  LoRa.write(LORA_DEST);
-  LoRa.write(LORA_LOCAL);
-  LoRa.write(outgoing.length());
-  LoRa.write(type);
-  LoRa.print(outgoing);
-  LoRa.endPacket();
+    LoRa.beginPacket();
+    LoRa.write(LORA_DEST);
+    LoRa.write(LORA_LOCAL);
+    LoRa.write(outgoing.length());
+    LoRa.write(type);
+    LoRa.print(outgoing);
+    LoRa.endPacket();
+
+    #ifdef LORA_TX_LOGGING
+    srlInfo("LoRa", "sent '" 
+            + String(LORA_DEST) + "/"
+            + String(LORA_LOCAL) + "/"
+            + String(outgoing.length()) + "/"
+            + String(type) + "/"
+            + String(outgoing)
+            + "'");
+    #endif
 }
 
 void initLoRa() {
     SPI.begin(SCK, MISO, MOSI, SS);
     LoRa.setPins(SS, RST, DIO0);
     if (!LoRa.begin(BAND)) {
-        srlError("LoRa", "Unable to start!");
+        srlError("LoRa", "Failed");
+        writeToDisplay("LoRa:", "Failed");
         while (1);
     }
     LoRa.onReceive(onReceive);
-    LoRa.onTxDone(LoRaRXM);
-    LoRaRXM();
     srlInfo("LoRa", "Initialized");
     writeToDisplay("LoRa:", "Initialized");
 }
