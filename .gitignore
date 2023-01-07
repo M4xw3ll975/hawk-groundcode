@@ -1,3 +1,5 @@
+.pio/
+.vscode/
 env/
 __pycache__/
 .idea/hawk-groundcode.iml
