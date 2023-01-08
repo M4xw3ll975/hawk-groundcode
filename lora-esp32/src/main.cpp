@@ -24,7 +24,7 @@
 
 void setup() {
   // Serial init
-  Serial.begin(115200);
+  initSerial();
   // init message
   srlInfo("System", "Starting " + String(GROUNDCODE_VERSION));
   // init OLED screen and output

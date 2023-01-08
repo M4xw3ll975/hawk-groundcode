@@ -1,2 +1,2 @@
-// visual logging seperator
-#define END_SEPERATOR ">"
+// main serial communication rate
+#define BAUD_RATE 250000
