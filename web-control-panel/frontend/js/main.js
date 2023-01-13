@@ -5,6 +5,9 @@
 'use strict';
 mapboxgl.accessToken = MAPBOX_API_KEY;
 
+//fs module to read the config file
+const fs = requirejs('fs');
+
 //map
 var map = new mapboxgl.Map({
     container: 'map',
@@ -248,19 +251,31 @@ setInterval(function () {
 
 }, 5000);
 
-//generate a gpx file from the coordinates
-function generateGPX(coordinates) {
-    var gpx = '<?xml version="1.0" encoding="UTF-8"?>';
-    gpx += '<gpx version="1.1" creator="AEHTER WCP" xmlns="http://www.topografix.com/GPX/1' +
-            '/1">\n';
-    gpx += '<metadata />\n';
-    //add the coordinates to the gpx file as waypoints
-    for (var i = 0; i < coordinates.length; i++) {
-        gpx += '<wpt lat="' + coordinates[i][1] + '" lon="' + coordinates[i][0] +
-                '"><name>"' + i + '"</name></wpt>\n';
-    }
-    gpx += '</gpx>';
-    return gpx;
+//generate a json file from the coordinates
+function generateJSN(coordinates) {
+    var json = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": coordinates
+                }
+            }
+        ]
+    };
+    //write json to file with fs
+    fs.writeFile('../json/coordinates.json', JSON.stringify(json), function (err) {
+        if (err) throw err;
+        console.log('Saved!');
+    });
+
+    
+    
+
+
+    return json;
 }
 
 // output the coordinates of the drawn path in the paragraph with
@@ -287,26 +302,4 @@ function outputWaypoints(coordinates) {
 //get the coordinates of the drawn path
 function updateArea(e) {
     var data = draw.getAll();
-
-    // uncomment to enable gpx export and download
-    // //generate a gpx file from the coordinates and save it to the server
-    // var gpx = generateGPX(data.features[0].geometry.coordinates);
-    // var blob = new Blob([gpx], {type: 'text/plain'});
-    // var url = URL.createObjectURL(blob);
-    // var link = document.createElement('a');
-    // link.href = url;
-    // link.download = 'path.gpx';
-    // link.click();
-
-    // FIXME: CODE BELOW NOT WORKING! (send the gpx file to the server) save the gpx
-    // file internally on the server in the folder "gpx" get path of the gpx folder
-    // var path = '../../gpx'; get the name of the gpx file var name = 'path.gpx';
-    // get the content of the gpx file var content = gpx; save the gpx file $.ajax({
-    // url: 'upload.php',     type: 'POST',     data: {         path: path,
-    // name: name,         content: content     },     success: function (data) {
-    // console.log(data);     } }); list the coordinates of the drawn path in the
-    // paragraph with id="waypoint-list"
-
-    // deprecated: list the coordinates of the drawn path in the paragraph in the html
-    // outputWaypoints(data.features[0].geometry.coordinates);
 }
