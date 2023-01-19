@@ -25,7 +25,17 @@ def choose_serial():
 
     #if the running OS is linux use the linux serial connection
     elif os.name == 'posix':
-        return serial.Serial('/dev/ttyUSB0', 115200)
+        #find the ttyUSB port of the serial connection and return it
+        for i in range(256):
+            try:
+                #try to open the ttyUSB port as string
+                s = serial.Serial("/dev/ttyUSB" + str(i), 115200)
+                s.close()
+                #output the ttyUSB port number and make the background of the print green
+                print("\033[92m" + "ttyUSB port found! ttyUSB port: " + str(i) + "\033[0m")
+                return serial.Serial("/dev/ttyUSB" + str(i), 115200)
+            except serial.SerialException:
+                pass
 
 # Define a function for reading from the serial connection
 def read_from_serial():
