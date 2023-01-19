@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from missioncontrol.token import MAP_TOKEN
+from missioncontrol.toserial import *
 
 def main() :
     #create the app
@@ -30,6 +31,8 @@ def main() :
 class MainWindow(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
+        #set window icon
+        self.setWindowIcon(QIcon('missioncontrol\logoNewTextIndustries.png'))
         #set the window title
         self.setWindowTitle("Mission Control")
         #set the window size to resizeable
@@ -85,6 +88,7 @@ class MainWindow(QtWidgets.QWidget):
                 </body>
             </html>
         ''')
+        #buttons
         self.button1 = QPushButton("Upload Route")
         self.button1.clicked.connect(self.on_button1_clicked)
         self.button2 = QPushButton("SEND IT!")
@@ -96,11 +100,19 @@ class MainWindow(QtWidgets.QWidget):
         self.text = QTextEdit()
         self.text.setReadOnly(True)
 
+        #set the textfield to transparent
+        # self.text.setStyleSheet("background-color: rgba(0, 0, 0, 0);")
+
+        #set the size of the buttons and the text output
         self.button1.setFixedSize(120, 50)
         self.button2.setFixedSize(120, 50)
         self.button3.setFixedSize(120, 50)
-        self.text.setFixedSize(120, 500)
+        #set the width of the text output to 120
+        self.text.setMinimumWidth(120)
+        #set the size of the text output to 120 x max height
+        self.text.setMaximumSize(120, 16777215)
 
+        #set the margins of the map
         self.map_view.setContentsMargins(10, 10, 10, 10)
 
         #put the button is QVBox layout and then put the QVBox layout in the QHBox layout with the map
@@ -110,17 +122,18 @@ class MainWindow(QtWidgets.QWidget):
         buttonLayout.addWidget(self.button3)
         buttonLayout.addWidget(self.text)
         buttonLayout.addStretch(1)
-
         mainLayout = QHBoxLayout()
         mainLayout.addLayout(buttonLayout)
         mainLayout.addWidget(self.map_view)
 
+        #set the layout
         self.setLayout(mainLayout)
 
+    #get the points of the drawn line
     def on_button1_clicked(self):
         self.map_view.page().runJavaScript("getLine()", self.on_markers_retrieved)
         
-
+    #generate a json object with the points of the drawn line and send it to the drone
     def on_markers_retrieved(self, markers_data):
         markers = markers_data
         #extract the points from the returned data
@@ -134,17 +147,91 @@ class MainWindow(QtWidgets.QWidget):
         
         #upload the points to the drone
         self.upload_to_drone(markersExtracted)
-        
+
+    
+    #upload the json to the drone via serial communication
     def upload_to_drone(self, markers):
-        print("UPLOAD TO DRONE")
+        print("\033[92m" + "UPLOAD TO DRONE" + "\033[0m")
         print(markers)
-        #TODO: send the points to the drone via serial communication
 
+        #surround the communication with a try catch block to catch errors
+        try:
+            #send the points to the drone via serial communication
+            #listen to the serial port
+            read_thread = threading.Thread(target=read_from_serial)
+            #send the points to the serial port
+            write_thread = threading.Thread(target=write_to_serial, args=(markers,))
+
+            #start the threads
+            read_thread.start()
+            write_thread.start()
+
+            #wait for the threads to finish
+            read_thread.join()
+            write_thread.join()
+
+            #close the serial port
+            close_serial()
+
+        except Exception as e:
+            print("\033[91m" + "ERROR: " + str(e) + "\033[0m")
+            #close the serial port
+            close_serial()
+
+
+    #send a command to the drone to start the mission
     def on_button2_clicked(self):
-        print("SEND IT!")
-        #TODO: send the command to the drone to start the mission
-        
-    def on_button3_clicked(self):
-        print("ABORT!")
-        #TODO: send the command to the drone to abort the mission
+        print("\033[92m" + "SEND IT!" + "\033[0m")
 
+        #surrond the communication with a try catch block to catch errors
+        try:
+            #send the command to the drone to start the mission
+            #listen to the serial port
+            read_thread = threading.Thread(target=read_from_serial)
+            #send the command "SEND_IT" to the serial port
+            write_thread = threading.Thread(target=write_to_serial, args=("SEND_IT",))
+
+            #start the threads
+            read_thread.start()
+            write_thread.start()
+
+            #wait for the threads to finish
+            read_thread.join()
+            write_thread.join()
+
+            #close the serial port
+            close_serial() 
+        
+        except Exception as e:
+            print("\033[91m" + "ERROR: " + str(e) + "\033[0m")
+            #close the serial port
+            close_serial()
+
+    
+    #send a command to the drone to abort the mission
+    def on_button3_clicked(self):
+        print("\033[91m" + "ABORT!" + "\033[0m")
+
+        #surrond the communication with a try catch block to catch errors
+        try:
+            #send the command to the drone to abort the mission
+            #listen to the serial port
+            read_thread = threading.Thread(target=read_from_serial)
+            #send the command "ABORT" to the serial port
+            write_thread = threading.Thread(target=write_to_serial, args=("ABORT",))
+
+            #start the threads
+            read_thread.start()
+            write_thread.start()
+
+            #wait for the threads to finish
+            read_thread.join()
+            write_thread.join()
+
+            #close the serial port
+            close_serial() 
+
+        except Exception as e:
+            print("\033[91m" + "ERROR: " + str(e) + "\033[0m")
+            #close the serial port
+            close_serial()
