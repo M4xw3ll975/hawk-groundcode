@@ -1,5 +1,30 @@
 # AETHER Groundcode - Groundstation #
-## General Structure ##
+
+## Usage ##
+
+### Groundstation ###
+1. Connect the ground station to the computer via USB
+2. Continue with [Mission Control](#mission-control)
+
+### Mission Control ###
+This guide will help you use the application.
+When starting the application, you will see a map, a map navigation bar, and 3 buttons. The map navigation bar allows you to zoom in and out of the map, and move around the map. The buttons are as follows:
+1. The first button is the 'Upload Route' button. This button allows you to add a mission to the map. You can add a mission by using the drawing functionality on the map, and then clicking on the 'Upload Route' button. The upload will take place in the background, there is no user interaction needed.
+2. The second button is the 'SEND IT!' button. This button allows you to start the mission. You can start the mission by clicking on the 'SEND IT!'button. The Plane will use the last uploaded mission.
+3. The third button is the 'ABORT!' button. This button allows you to abort the mission. You can abort the mission by clicking on the 'ABORT!' button.The Plane will stop the mission and return to the home position or use the build in FTS
+To draw on the map, you can use the following tools that are on the right side of the map:
+1. Line plotter - to draw lines on the map
+2. Polygon plotter - to draw areas on the map
+3. Marker - to place single points on the map
+4. Eraser - to remove points from the map
+5. Combine - to combine multiple points into a single point
+6. Uncombine - to split a single point into multiple points
+For more information, please take a look at the readme file tha tis included in the installation folder or at our documentation.
+Have fun using AETHER Mission Control!
+
+<br>
+
+## General File Structure ##
 
 The groundcode is structured in the following way (links to files/folders):
 - env - contains the virtual environment
@@ -19,6 +44,8 @@ The groundcode is structured in the following way (links to files/folders):
 - [requirements.txt](https://github.com/AetherAerospace/hawk-groundcode/blob/main/requirements.txt) - contains the requirements for the application
 - [mission-control.py](https://github.com/AetherAerospace/hawk-groundcode/blob/main/mission-control.py) - main file for the application
 
+
+
 ## Ground Station ##
 
 *Will be added by @0xk1f0*
@@ -34,7 +61,9 @@ It is split into 3 main parts:
 - The [main application](#main-application-file) file
 - The [setup](#setup) file
 
-Follow [this guide](#guide) on how to use the application.
+Follow [this guide](#usage) on how to use the application.
+
+
 
 ### Main Application ###
 The main application file is [mission-control.py](https://github.com/AetherAerospace/hawk-groundcode/blob/main/mission-control.py). It contains the following code and is self explanatory:
@@ -378,19 +407,3 @@ The installer then starts the `mission-control.py` file. <br>
 #### Linux/MacOS ####
 *Not yet implemented*
 
-## Guide ##
-### Mission Control ###
-This guide will help you use the application.
-When starting the application, you will see a map, a map navigation bar, and 3 buttons. The map navigation bar allows you to zoom in and out of the map, and move around the map. The buttons are as follows:
-1. The first button is the 'Upload Route' button. This button allows you to add a mission to the map. You can add a mission by using the drawing functionality on the map, and then clicking on the 'Upload Route' button. The upload will take place in the background, there is no user interaction needed.
-2. The second button is the 'SEND IT!' button. This button allows you to start the mission. You can start the mission by clicking on the 'SEND IT!'button. The Plane will use the last uploaded mission.
-3. The third button is the 'ABORT!' button. This button allows you to abort the mission. You can abort the mission by clicking on the 'ABORT!' button.The Plane will stop the mission and return to the home position or use the build in FTS
-To draw on the map, you can use the following tools that are on the right side of the map:
-1. Line plotter - to draw lines on the map
-2. Polygon plotter - to draw areas on the map
-3. Marker - to place single points on the map
-4. Eraser - to remove points from the map
-5. Combine - to combine multiple points into a single point
-6. Uncombine - to split a single point into multiple points
-For more information, please take a look at the readme file tha tis included in the installation folder or at our documentation.
-Have fun using AETHER Mission Control!
