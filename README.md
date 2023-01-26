@@ -83,7 +83,7 @@ For more information, please take a look at the readme file thatis included in t
 ---
 
 # DOCUMENTATION #
-The documentation can be found [here](Documentation).
+The documentation can be found [here](Documentation/DOCUMENTATION.md).
 
 # LICENSE #
 This project is licensed under the GNU GENERAL PUBLIC License - see the [LICENSE](LICENSE) file for details
