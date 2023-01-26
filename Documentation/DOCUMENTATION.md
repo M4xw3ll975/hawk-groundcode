@@ -286,7 +286,7 @@ The script is called with the following command:
 python3 setup-win.py
 ```
 
-<img src="installer-start.png" width="450">
+<img src="Installer-start.png" width="450">
 
 The installer is based on PyQt5. 
 To run the installer, you need to install PyQt5. <br>
