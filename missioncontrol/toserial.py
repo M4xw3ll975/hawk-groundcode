@@ -1,3 +1,4 @@
+import time
 import serial
 import threading
 import os
@@ -54,6 +55,11 @@ def read_from_serial():
         if data == b'success\n':
             # Signal to the threads to stop
             stop = True
+        #if the command "success" has not been received, wait 5 seconds and then close the serial connection
+        else:
+            time.sleep(5)
+            close_serial()
+
 
 # Define a function for writing to the serial connection
 def write_to_serial(send_data):
@@ -65,7 +71,7 @@ def write_to_serial(send_data):
         #send the send_data to the drone
         ser.write(send_data.encode())
         #after sending the data, send the string "complete" to the drone
-        ser.write("complete".encode())
+        ser.write(b'complete')
 
 # Define a function for closing the serial connection
 def close_serial():
@@ -73,7 +79,7 @@ def close_serial():
     ser = choose_serial()
 
     # Close the serial connection
-    ser.close()
+    # ser.close()
 
 # Create a thread for reading from the serial connection
 read_thread = threading.Thread(target=read_from_serial)
